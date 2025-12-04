@@ -1,0 +1,141 @@
+[gd_scene load_steps=15 format=3 uid="uid://dvfjq2r11yaxq"]
+
+[ext_resource type="Script" uid="uid://cd1erfmpo38id" path="res://enemy_tank.gd" id="1_1de0v"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_how3p"]
+albedo_color = Color(1, 0.45225435, 0.39351723, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_how3p"]
+material = SubResource("StandardMaterial3D_how3p")
+size = Vector3(2, 1, 3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6lwfj"]
+albedo_color = Color(0.89454645, 0.5599551, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6lwfj"]
+material = SubResource("StandardMaterial3D_6lwfj")
+height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1ealj"]
+albedo_color = Color(0.7149643, 0.65857506, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_1ealj"]
+material = SubResource("StandardMaterial3D_1ealj")
+top_radius = 0.1
+bottom_radius = 0.1
+height = 1.0
+radial_segments = 16
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_a62es"]
+size = Vector3(2, 1.5, 3)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_1de0v"]
+height = 5.0
+radius = 50.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_s74fj"]
+height = 5.0
+radius = 25.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_1de0v"]
+radius = 0.1
+height = 0.2
+
+[sub_resource type="SphereMesh" id="SphereMesh_s74fj"]
+radius = 0.1
+height = 0.2
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_1de0v"]
+viewport_path = NodePath("Sprite3D/SubViewport")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1de0v"]
+bg_color = Color(1, 0, 0, 1)
+
+[node name="Enemy Tank" type="CharacterBody3D" groups=["Enemy"]]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+script = ExtResource("1_1de0v")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_how3p")
+
+[node name="Head" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("CylinderMesh_6lwfj")
+
+[node name="Barrel" type="MeshInstance3D" parent="Head"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 1.7484555e-07, 0.2504512, -1)
+mesh = SubResource("CylinderMesh_1ealj")
+
+[node name="Marker3D" type="Marker3D" parent="Head/Barrel"]
+transform = Transform3D(1, 9.5042154e-08, 8.709008e-08, 9.504214e-08, -0.08715576, -0.9961945, -8.709011e-08, 0.9961945, -0.08715576, 8.742276e-08, -1, -0.1000002)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+shape = SubResource("BoxShape3D_a62es")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+
+[node name="Player detected" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player detected"]
+shape = SubResource("CylinderShape3D_1de0v")
+
+[node name="Player Nearby" type="Area3D" parent="."]
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Player Nearby"]
+shape = SubResource("CylinderShape3D_s74fj")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[node name="Hit" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+emitting = false
+amount = 20
+one_shot = true
+randomness = 1.0
+mesh = SubResource("SphereMesh_1de0v")
+emission_shape = 3
+emission_box_extents = Vector3(1, 0.1, 1)
+direction = Vector3(1, 1, 1)
+spread = 180.0
+gravity = Vector3(0, 2, 0)
+
+[node name="Disabled" type="CPUParticles3D" parent="."]
+process_mode = 3
+emitting = false
+amount = 30
+lifetime = 1.5
+mesh = SubResource("SphereMesh_s74fj")
+emission_shape = 3
+emission_box_extents = Vector3(0.9, 0.1, 0.9)
+gravity = Vector3(0, 2, 0)
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+process_mode = 3
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+texture = SubResource("ViewportTexture_1de0v")
+
+[node name="SubViewport" type="SubViewport" parent="Sprite3D"]
+size = Vector2i(512, 100)
+
+[node name="ProgressBar" type="ProgressBar" parent="Sprite3D/SubViewport"]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -53.5
+offset_right = 512.0
+offset_bottom = 46.5
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/fill = SubResource("StyleBoxFlat_1de0v")
+max_value = 3.0
+fill_mode = 1
+show_percentage = false
+
+[connection signal="body_entered" from="Player detected" to="." method="_on_player_detected_body_entered"]
+[connection signal="body_exited" from="Player detected" to="." method="_on_player_detected_body_exited"]
+[connection signal="body_entered" from="Player Nearby" to="." method="_on_player_nearby_body_entered"]
+[connection signal="body_exited" from="Player Nearby" to="." method="_on_player_nearby_body_exited"]
